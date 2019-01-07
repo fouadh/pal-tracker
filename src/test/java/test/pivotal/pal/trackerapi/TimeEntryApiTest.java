@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
 public class TimeEntryApiTest {
+    @LocalServerPort
+    private String port;
 
-    @Autowired
     private TestRestTemplate restTemplate;
 
     private final long projectId = 123L;
@@ -43,6 +45,8 @@ public class TimeEntryApiTest {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.execute("truncate time_entries");
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
+        restTemplate = Setup.buildTestRestTemplate(port);
     }
 
     @Test
